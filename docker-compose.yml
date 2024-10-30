@@ -14,7 +14,7 @@ services:
       - "5433:5432"
 
   backend:
-    image: backend:latest
+    image: ahmedhamdo/backend:latest
     environment:
       POSTGRES_URL: jdbc:postgresql://postgres:5432/petclinic
       POSTGRES_USER: petclinic
@@ -25,7 +25,7 @@ services:
       - "9966:9966"
 
   frontend:
-    image: frontend:latest
+    image: ahmedhamdo/frontend:latest
     ports:
       - "80:80"
     depends_on:
