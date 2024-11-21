@@ -59,3 +59,7 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      - name: Run Frontend Tests
+        working-directory: ./frontend
+        run: npm test
