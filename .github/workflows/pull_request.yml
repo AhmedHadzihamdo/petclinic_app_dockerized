@@ -8,6 +8,7 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    fail-fast: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,8 +31,13 @@ jobs:
         working-directory: ./backend
         run: mvn clean install
 
+      - name: Run Backend Tests
+        working-directory: ./backend
+        run: mvn test
+
   frontend:
     runs-on: ubuntu-latest
+    fail-fast: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,9 +46,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('**/package-lock.json') }}
+          key: npm-${{ hashFiles('**/frontend/package-lock.json') }}
           restore-keys: |
             npm-
+          working-directory: ./frontend
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
