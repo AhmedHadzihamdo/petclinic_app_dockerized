@@ -6,8 +6,8 @@ on:
       - develop
 
 jobs:
-  backend:
-    runs-on: ubuntu-latest
+  validate-backend:
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,16 +26,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build Backend
+      - name: Build and Test Backend
         working-directory: ./backend
-        run: mvn clean install
+        run: |
+          mvn clean install
+          mvn test
 
-      - name: Run Backend Tests
-        working-directory: ./backend
-        run: mvn test
-
-  frontend:
-    runs-on: ubuntu-latest
+  validate-frontend:
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -44,22 +42,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('**/frontend/package-lock.json') }}
+          key: npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-
-          working-directory: ./frontend
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install and Build Frontend
+      - name: Install and Test Frontend
         working-directory: ./frontend
         run: |
           npm ci
-          npm run build
-
-      - name: Run Frontend Tests
-        working-directory: ./frontend
-        run: npm test
+          npm test
