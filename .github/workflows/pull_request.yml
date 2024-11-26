@@ -6,30 +6,53 @@ on:
       - develop
 
 jobs:
-  validate-build:
-    runs-on: ubuntu-latest
-
+  validate-backend:
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js for Frontend
-        uses: actions/setup-node@v3
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
         with:
-          node-version: '16'
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-
 
-      - name: Build Frontend
-        working-directory: ./frontend
-        run: |
-          npm install
-          npm run build
-
-      - name: Set up Java for Backend
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build Backend
+      - name: Build and Test Backend
         working-directory: ./backend
-        run: mvn clean install
+        run: |
+          mvn clean install
+          mvn test
+
+  validate-frontend:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install and Test Frontend
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm test
