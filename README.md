@@ -33,3 +33,4 @@ Once all services are running, the frontend should be accessible at http://local
 Additional Notes
 Database Configuration: PostgreSQL credentials (username, password, database name) are set up in docker-compose.yml. You can adjust these settings in the Docker Compose file or directly in the backend application’s application.properties file.
 Docker Network: The application uses a Docker network to facilitate communication between services.
+Test commit for triggering workflow
